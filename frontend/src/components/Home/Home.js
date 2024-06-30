@@ -4,7 +4,8 @@ import { useEffect,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LeftPanel from '../LeftPanel/LeftPanel';
 import Main from '../RightPanel/Main'
-import Login from '../Login/Login';
+
+import logo from './logo.png'
 import api from '../API/api';
 
 const Home = () => {
@@ -60,6 +61,7 @@ const [socket,setSocket]=useState()
     })
   }
 }
+
 const handleClick=(name)=>{
     socket.emit('join',{user1:user,user2:name})
     console.log(name+'k')
@@ -76,8 +78,8 @@ useEffect(()=>{
   if(socket){then();}
 },[socket,])
 const then=()=>{socket.on('connect',function(){ 
-  
-  socket.emit('ehlo', {user:user,friends:friends});
+  const token=localStorage.getItem('dtoken')
+  socket.emit('ehlo', {user:user,friends:friends,dtoken:token});
 });
   socket.on('getonline',(data)=>{
     setOnline(data)
@@ -97,7 +99,7 @@ const then=()=>{socket.on('connect',function(){
     
    
     if(data.sender){let arr=messages
-      setOnem({sender:data.sender,message:data.message,date:data.date});
+      setOnem({sender:data.sender,message:data.message,date:data.date,type:data.type});
   }else{
     }})
   socket.on("message", (message) => {
@@ -151,23 +153,23 @@ const handleDis=()=>{
     setMessages(arr)
     setTrig(!trig)}
  },[onem])
-  const handleSend=(name,message)=>{
+  const handleSend=(name,message,type)=>{
     let read=false;
     if(online.includes(name)){
       read=true
     }
-    socket.emit('send',{sender:user,reciever:name,message:message})
+    socket.emit('send',{sender:user,reciever:name,message:message,type})
     let arr=messages
     let date=new Date(Date.now())
     console.log(date)
-    arr.push({sender:user,message:message,read:read,date:date.toISOString()})
+    arr.push({sender:user,message:message,read:read,date:date.toISOString(),type:type})
     setMessages(arr)
     
     let ari=[]
     chats.forEach((e)=>{
       if(e.name===name){
         let au=e
-        au.last[0]={sender:user,message:message}
+        au.last[0]={sender:user,message:message,type:type}
         ari.push(au)
       }else{
         ari.push(e)
@@ -176,7 +178,7 @@ const handleDis=()=>{
     console.log(ari)
     setChats(ari)
     setTrig(!trig)
-    api.post('chat/add',{user1:user,user2:name,message:message,read:read})
+    api.post('chat/add',{user1:user,user2:name,message:message,read:read,type:type})
   }
   const handleAdd=()=>{
     console.log(user)
@@ -210,8 +212,10 @@ const handleDis=()=>{
 }
   
   }
-  return (
+  return (<>
+  <div className='text-2xl h-12 items-center flex flex-row px-4 font-semibold bg-teal-300 '><img className='w-8 h-8 mr-4 rounded-lg' src={logo}/> WeChat</div>
     <div className='flex flex-row'>
+      
       {ispop6&&<div className=' flex z-20 fixed h-full w-full bg-black bg-opacity-20 items-center justify-center'>
     <div className='bg-white w-[30vw] rounded-xl shadow-lg shadow-gray-600 items-center px-8 py-5 flex flex-col h-[35vh]'>
     <h1 className='text-xl self-start font-semibold'>Hello! enter the username of person you want to add</h1>
@@ -253,6 +257,7 @@ const handleDis=()=>{
       
       />}
     </div>
+    </>
   )
 }
 

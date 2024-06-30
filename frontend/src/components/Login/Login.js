@@ -3,11 +3,23 @@ import { useEffect,useState } from 'react'
 import user from './user.jpg'
 import api from '../API/api'
 import { useNavigate } from 'react-router-dom';
-
+import {getToken} from 'firebase/messaging';
+import { messaging } from '../../firebase.js';
 const Login = () => {
     const [name,setName]=useState('');
     const [password,setPassword]=useState('');
+    
     const navigate=useNavigate()
+    async function requestPermission(){
+      const permission=await Notification.requestPermission()
+      if(permission==='granted'){
+        const token=await getToken(messaging, { vapidKey: process.env.REACT_APP_vapidKey });
+        localStorage.setItem('dtoken',token)
+        
+      }else if(permission==='denied'){
+        alert("You denied notification, please enable notification");
+      }
+    }
     const check=()=>{
         const token = localStorage.getItem('token')
         if (!token) {
@@ -35,7 +47,7 @@ const Login = () => {
           })
         }
       }
-      useEffect(() =>{   check()}, [])
+      useEffect(() =>{  requestPermission(); check()}, [])
     const handleClick=()=>{
         api.post('/user/login',{username:name,password:password}).then((res)=>{if(res.data.success){
             localStorage.setItem('token',res.data.token)

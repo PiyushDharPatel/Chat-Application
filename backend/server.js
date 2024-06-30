@@ -6,7 +6,8 @@ const checkRouter=require('./routes/checkroute')
 const chatRouter=require('./routes/chatroute')
 const asyncHandler=require("express-async-handler");
 const User=require('./models/user.Model')
-
+const { sendPushNotification } = require('./controllers/notificationsController');
+const bodyParser = require('body-parser');
 const connectDb = require("./configure/dbConnection");
 const cors=require('cors');
 connectDb()
@@ -17,16 +18,21 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, { 
     cors:{
         origin:"*"
-    }
+    },
+    maxHttpBufferSize: 1e8
  });
 let  mapi=new Map()
 let mapi2=new Map()
+let mapi3=new Map()
 io.on("connection", (socket) => {
   
     
   socket.on('ehlo',async(name)=>{
     mapi[name.user]=socket.id;
     mapi2[socket.id]=name.user
+    if(name.dtoken){
+      mapi3[name.user]=name.dtoken
+    }
     console.log(mapi2)
     
     name.friends.forEach(
@@ -63,8 +69,10 @@ io.on("connection", (socket) => {
 });
 socket.on('send',(data)=>{
   console.log("hi")
-  socket.to(mapi[data.reciever]).emit('recieve',{sender:data.sender,message:data.message,date:(new Date())})
-  
+  socket.to(mapi[data.reciever]).emit('recieve',{sender:data.sender,message:data.message,date:(new Date()),type:data.type})
+  if(mapi[data.reciever]&&mapi3[data.reciever]){
+    sendPushNotification({body:{token:mapi3[data.reciever],message:data.message,name:data.sender}})
+  }
 })
 socket.on('activity',async(name)=>{
   console.log(name.name)
@@ -80,16 +88,18 @@ socket.on('disconnect', async() => {
   
   mapi[user]=''
   
+  
   const jus=await User.findOne({username:user})
   if(jus&&jus.friends){jus.friends.forEach(
     (item)=>{socket.to(mapi[item]).emit('refresh',user)}
   )}
 });
 });
-app.use(express.json());
+app.use(bodyParser.json({ limit: "50mb" }))
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }))
 app.use(
   cors({
-      origin:["http://localhost:3000","http://localhost:3001"]
+      origin:"*"
   })
 )
 app.use('/user',userRouter);
