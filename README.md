@@ -3,7 +3,7 @@
 
                                                 Login Page
 
-                                        ![Login-Page](images/login-1.png)
+                                        ![Login-Page](login-1.png)
 
                                                 Sign In Page
 
