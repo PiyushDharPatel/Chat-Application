@@ -47,7 +47,7 @@ const Login = () => {
           })
         }
       }
-      useEffect(() =>{  requestPermission(); check()}, [])
+      useEffect(() =>{  let dtoken=localStorage.getItem('dtoken'); if(!dtoken){requestPermission()}; check()}, [])
     const handleClick=()=>{
         api.post('/user/login',{username:name,password:password}).then((res)=>{if(res.data.success){
             localStorage.setItem('token',res.data.token)

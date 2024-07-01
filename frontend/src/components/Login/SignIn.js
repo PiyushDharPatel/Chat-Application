@@ -27,7 +27,16 @@ const SignIn = () => {
     const input2=useRef()
     const input3=useRef()
     const input4=useRef()
-   
+    async function requestPermission(){
+      const permission=await Notification.requestPermission()
+      if(permission==='granted'){
+        const token=await getToken(messaging, { vapidKey: process.env.REACT_APP_vapidKey });
+        localStorage.setItem('dtoken',token)
+        
+      }else if(permission==='denied'){
+        alert("You denied notification, please enable notification");
+      }
+    }
     const handleChange=(e,s)=>{
       if(s==='n'){
         setUserName(e.target.value)
@@ -156,7 +165,7 @@ const check=()=>{
     })
   }
 }
-useEffect(() =>{   check()}, [])
+useEffect(() =>{ let dtoken=localStorage.getItem('dtoken'); if(!dtoken){requestPermission()};  check()}, [])
   return (
     <div>
      

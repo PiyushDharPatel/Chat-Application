@@ -218,7 +218,7 @@ const handleDis=()=>{
       
       {ispop6&&<div className=' flex z-20 fixed h-full w-full bg-black bg-opacity-20 items-center justify-center'>
     <div className='bg-white w-[30vw] rounded-xl shadow-lg shadow-gray-600 items-center px-8 py-5 flex flex-col h-[35vh]'>
-    <h1 className='text-xl self-start font-semibold'>Hello! enter the username of person you want to add</h1>
+    <h1 className='text-xl self-start font-semibold'>Hello! Enter the username of person you want to add</h1>
     <div className='flex mt-4 h-24 flex-col p-1'>
           <label className='font-semibold'>Username </label>
         <input type='text' value={mann} onChange={(e)=>{setMann(e.target.value)}} className='w-72 border-[1px] rounded-sm px-2 border-gray-500 border-solid h-10'/></div>
@@ -236,6 +236,7 @@ const handleDis=()=>{
       </div>}
       <LeftPanel
       ispop6={ispop6}
+      rec={rec}
       setIspop6={setIspop6}
       friends={friends}
       handleClick={handleClick}

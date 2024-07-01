@@ -1,3 +1,34 @@
+# Chat-Application
+                                          Screenshots From Project
+
+                                                Login Page
+
+                                        ![Login-Page](images/login-1.png)
+
+                                                Sign In Page
+
+                                          ![sign-in](images/signin.png)
+
+                                                  Chat Room
+
+                                          ![chat-room](images/online.png)
+
+                                                Adding Friends
+
+                                          ![add-friend](images/add.png)
+
+                                                File Preview Panel
+
+                                          ![file-preview](images/preview.png)
+
+                                                Sending Emoticons
+
+                                          ![emoticons](images/emoji.png)
+
+                                            Sending Message to Offline users
+
+                                            ![offline](images/seen.png)
+
 
 INSTRUCTIONS FOR RUNNING THE SERVER IN LOCALHOST---
 
